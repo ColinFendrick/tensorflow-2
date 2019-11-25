@@ -11,7 +11,9 @@ X_test = X_test / 255.0
 X_train = X_train.reshape(-1, 28*28)
 X_test = X_test.reshape(-1, 28*28)
 
+###
 # Creating the network
+###
 
 # Model
 model = tf.keras.models.Sequential()
@@ -32,3 +34,13 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
               metrics=['sparse_categorical_accuracy'])
               
 model.summary()
+
+###
+# Using the model
+###
+
+model.fit(X_train, y_train, epochs=5)
+
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+
+print("Test accuracy: {}".format(test_accuracy))
