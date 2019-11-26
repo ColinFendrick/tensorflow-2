@@ -39,7 +39,7 @@ model.summary()
 # Using the model
 ###
 
-model.fit(X_train, y_train, epochs=5)
+model.fit(X_train, y_train, epochs=10)
 
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
