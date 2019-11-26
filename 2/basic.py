@@ -43,4 +43,5 @@ model.fit(X_train, y_train, epochs=5)
 
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 
+model.summary()
 print("Test accuracy: {}\nTest loss: {}".format(test_accuracy, test_loss))
