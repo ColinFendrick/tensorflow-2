@@ -45,6 +45,8 @@ model.add(tf.keras.layers.Flatten())
 # 128 neurons, relu activation
 model.add(tf.keras.layers.Dense(units=128, activation="relu"))
 
+model.add(tf.keras.layers.Dropout(0.2))
+
 # Second dense layer (output layer)
 model.add(tf.keras.layers.Dense(units=10, activation="softmax"))
 
@@ -55,7 +57,7 @@ model.compile(loss="sparse_categorical_crossentropy",
               optimizer="Adam", metrics=["sparse_categorical_accuracy"])
 
 # Do the basics now: fit, evaluate, summarize
-model.fit(X_train, y_train, epochs=5)
+model.fit(X_train, y_train, epochs=15)
 
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 model.summary()
