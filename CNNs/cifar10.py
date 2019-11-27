@@ -48,4 +48,15 @@ model.add(tf.keras.layers.Dense(units=128, activation="relu"))
 # Second dense layer (output layer)
 model.add(tf.keras.layers.Dense(units=10, activation="softmax"))
 
+# Compiling model
+# sparse_categorical_accuracy checks to see if the maximal true value is equal to the index of the maximal predicted value
+
+model.compile(loss="sparse_categorical_crossentropy",
+              optimizer="Adam", metrics=["sparse_categorical_accuracy"])
+
+# Do the basics now: fit, evaluate, summarize
+model.fit(X_train, y_train, epochs=5)
+
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
 model.summary()
+print("Test accuracy: {}\nTest loss: {}".format(test_accuracy, test_loss))
