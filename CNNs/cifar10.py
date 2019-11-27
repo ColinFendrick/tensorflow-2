@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import cifar10
 
 # Setting class names for the dataset
-class_names = ['airplane', 'automobile', 'bird', 'cat',
-               'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+class_names = ["airplane", "automobile", "bird", "cat",
+               "deer", "dog", "frog", "horse", "ship", "truck"]
 
 # Loading the dataset
 (X_train, y_train), (X_test, y_test) = cifar10.load_data()
 X_train = X_train / 255.0
 X_test = X_test / 255.0
 plt.imshow(X_test[10])
-plt.show()
+# plt.show()
 
 model = tf.keras.models.Sequential()
 
@@ -26,14 +26,26 @@ model.add(tf.keras.layers.Conv2D(
 model.add(tf.keras.layers.Conv2D(
     filters=32, kernel_size=3, padding="same", activation="relu"))
 
-model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding='valid'))
+model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding="valid"))
 
 # Add third layer
 model.add(tf.keras.layers.Conv2D(
     filters=64, kernel_size=3, padding="same", activation="relu"))
 
-# Add the fourth layer and max pool
+# Add the fourth layer and another max pool
 model.add(tf.keras.layers.Conv2D(
     filters=64, kernel_size=3, padding="same", activation="relu"))
 
-model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding='valid'))
+model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding="valid"))
+
+# Flatten
+model.add(tf.keras.layers.Flatten())
+
+# Add a dense layer
+# 128 neurons, relu activation
+model.add(tf.keras.layers.Dense(units=128, activation="relu"))
+
+# Second dense layer (output layer)
+model.add(tf.keras.layers.Dense(units=10, activation="softmax"))
+
+model.summary()
