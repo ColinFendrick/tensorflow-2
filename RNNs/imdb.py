@@ -9,7 +9,7 @@ max_len = 100
 # Load data
 (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=number_of_words)
 
-# Padd all sequences to be the same length
+# Pad all sequences to be the same length
 X_train = tf.keras.preprocessing.sequence.pad_sequences(
     X_train, maxlen=max_len)
 
@@ -27,13 +27,19 @@ model.add(tf.keras.layers.Embedding(
     vocab_size, embed_size, input_shape=(X_train.shape[1],)))
 
 # Add the LSTM Layer
-# 128 units, tanh activation
+# 128 units, tanh activation - usual activation for lstm
 model.add(tf.keras.layers.LSTM(units=128, activation='tanh'))
 
-# Adding the dense output layer
+model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+model.add(tf.keras.layers.Dropout(0.2))
+
+# Adding the dense output layer - only 1 output neuron since it is a binary choice
 model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
 
 # Compile, fit, evaluate
+# rmsprop is recommended for rnn
+# binary_crossentropy is because we hace a binary choice model
+# accuracy metric is used in binary models
 model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=['accuracy'])
 
