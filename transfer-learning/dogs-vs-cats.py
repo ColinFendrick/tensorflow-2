@@ -34,9 +34,9 @@ model = tf.keras.models.Model(
     inputs=base_model.input, outputs=prediction_layer)
 # model.summary()
 
-# Compile
-model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
-              loss="binary_crossentropy", metrics=["accuracy"])
+# # Compile
+# model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
+#               loss="binary_crossentropy", metrics=["accuracy"])
 
 # Create data generators
 data_gen_train = ImageDataGenerator(rescale=1/255.)
@@ -46,9 +46,23 @@ train_generator = data_gen_train.flow_from_directory(
 valid_generator = data_gen_valid.flow_from_directory(
     validation_dir, target_size=(128, 128), batch_size=128, class_mode="binary")
 
-# Train model
+## Train model
+# model.fit_generator(train_generator, epochs=5, validation_data=valid_generator)
+
+# # Evaluate
+# valid_loss, valid_accuracy = model.evaluate_generator(valid_generator)
+# print("Accuracy after transfer learning: {}".format(valid_accuracy))
+
+# Fine-tuning
+base_model.trainable = True
+print("Number of layers in the base model: {}".format(len(base_model.layers)))
+fine_tune_at = 100
+for layer in base_model.layers[:fine_tune_at]:
+    layer.trainable = False
+
+model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=0.0001),
+              loss='binary_crossentropy', metrics=['accuracy'])
 model.fit_generator(train_generator, epochs=5, validation_data=valid_generator)
 
-# Evaluate
 valid_loss, valid_accuracy = model.evaluate_generator(valid_generator)
-print("Accuracy after transfer learning: {}".format(valid_accuracy))
+print("Validation accuracy after fine tuning: {}".format(valid_accuracy))
