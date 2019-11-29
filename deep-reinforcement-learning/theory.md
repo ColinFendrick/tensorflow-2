@@ -65,3 +65,36 @@ $$
 Q(s, a) = R(s, a) + γ\sum_{s'}(P(s,v a, s')max_{a'}Q(s', a'))
 $$
 In this way we can express this as a check of agent actions.
+
+## Temporal Difference
+
+Using the deterministic Bellman equation for simplicity sake:
+$$
+Q(s, a) = R(s, a) + γmax_{a'}Q(s', a')
+$$
+Then the temporal difference - the after value minus the
+previous value.
+$$
+TD(s, a) = R(s, a) + γmax_{a'}Q(s', a') - Q(s, a)
+$$
+If the model is perfect, this would be 0. However, the Q(s, a)
+value is the previous value, the new value is what is calculated
+after the agent takes the action. This could be due to
+randomness. So we change our Q values slightly over time
+due to the temporal difference:
+$$
+Q_t(s, a) = Q_{t-1}(s, a) + \alpha TD_t(s, a)
+$$
+Then we can substitute this temporal difference out with the
+corresponding Q-value to get a recursive Q formula:
+$$
+Q_t(s, a) = Q_{t-1}(s, a) + \alpha\big(
+  R(s, a) + γmax_{a'}Q(s', a') - Q_{t-1}(s, a)
+\big)
+$$
+Seen above, the alpha value gives a weight to how much the
+previous state has, since we have
+$$
+Q_{t-1}(s,a)-\alpha Q{t-1}(s,a)
+$$
+inside of the equation. This is to account for randomness.
