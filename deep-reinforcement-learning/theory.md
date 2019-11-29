@@ -109,3 +109,27 @@ The neural network can predict multiple Q-values. Then each
 loss is calculated for the predicted q-values and
 back-propogated. Then the action is passed through a soft-max
 function to select the best action possible.
+
+## Experience Replay
+
+Lots of consecutive states can bias a network. E.g. a
+self-driving car learning to drive on a straight road biases a
+a network against turning.
+
+Experience replay will randomly select a uniformly-distributed
+sample of batched experiences and learns from that. This way the
+network does not overfit to consecutive experiences. This can
+be used to give more weight to rare experiences. Also helps to
+learn faster, especially in smaller data.
+
+## Action Selection Policy
+
+We don't just select the highest Q value, but rather use a
+function (softmax, epsilon-greedy, etc) to force the agent to
+explore. This is to prevent bias towards local maxima. E.g.
+going up is a good action to take but the agent has never tried
+going down.
+
+- epsilon-greedy means take the best action except epsilon percent of the time
+- epsilon-soft means take the best action except 1-epsilon percent of the time (inverted of epsilon-greedy)
+- Softmax takes however many outputs you have, squashes them to between [0, 1] that add up to 1.
