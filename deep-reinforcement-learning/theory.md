@@ -98,3 +98,14 @@ $$
 Q_{t-1}(s,a)-\alpha Q{t-1}(s,a)
 $$
 inside of the equation. This is to account for randomness.
+
+## Deep Q-Learning
+
+We feed information of each state into a neural network that
+gives us the Q values. Rather than comparing against previous
+Q-values when determining temporal difference, neural network
+makes predictions of the Q-values for agent to compare against.
+The neural network can predict multiple Q-values. Then each
+loss is calculated for the predicted q-values and
+back-propogated. Then the action is passed through a soft-max
+function to select the best action possible.
