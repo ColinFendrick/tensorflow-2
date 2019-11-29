@@ -48,3 +48,20 @@ up, etc.
 $$
 V(s) = max_a\bigg(R(s, a) + γ\sum_{s'}P(s, a, s')V(s')\bigg)
 $$
+
+## Q-Learning
+
+Instead of looking at values of each state the agent could end
+up in, we look at the value of the action. Similar to equation
+above, we have the reward for action plus discounted
+expected value of the next state (due to randomness in action).
+Thus the Q value is the value inside the brackets above - the
+thing the agent must select the maximum of above.
+$$
+Q(s, a) = R(s, a) + γ\sum_{s'}(P(s,v a, s')V(s'))
+$$
+Substituting, since this is a recursive function of V:
+$$
+Q(s, a) = R(s, a) + γ\sum_{s'}(P(s,v a, s')max_{a'}Q(s', a'))
+$$
+In this way we can express this as a check of agent actions.
