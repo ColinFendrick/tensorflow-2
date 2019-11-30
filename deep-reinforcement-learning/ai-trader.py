@@ -98,3 +98,17 @@ def state_creator(data, timestep, window_size):
         state.append(sigmoid(windowed_data[i+1] - windowed_data[i]))
 
     return np.array([state])
+
+# Load the dataset
+stock_name = "AAPL"
+data = dataset_loader(stock_name)
+
+# Set hyper parameters
+window_size = 10
+episodes = 1000
+
+batch_size = 32
+data_samples = len(data) - 1
+
+# Define trader model
+trader = AI_Trader(window_size)
