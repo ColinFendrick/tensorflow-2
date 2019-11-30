@@ -69,7 +69,7 @@ def sigmoid(x):
 
 def stocks_price_format(n):
     if n < 0:
-        return "- $ {0:2f}".format(abs(n))
+        return "-$ {0:2f}".format(abs(n))
     else:
         return "$ {0:2f}".format(abs(n))
 
@@ -121,41 +121,41 @@ for episode in range(1, episodes + 1):
     state = state_creator(data, 0, window_size + 1)
 
     total_profit = 0
-    trader.inventory = []
+    trader.inventory = [] # Clean inventory before we start each episode
 
-    for t in tqdm(range(data_samples)):
-        action = trader.trade(state)
-        next_state = state_creator(data, t+1, window_size + 1)
+    for t in tqdm(range(data_samples)): # tqdm creates progress bar visualization
+        action = trader.trade(state) # Use trade funciton to get an action
+        next_state = state_creator(data, t+1, window_size + 1) # Next state getter
         reward = 0
 
         if action == 1:  # Buying
-            trader.inventory.append(data[t])
+            trader.inventory.append(data[t]) # Put stock in inventory
             print("AI Trader bought: ", stocks_price_format(data[t]))
 
-        elif action == 2 and len(trader.inventory) > 0:  # Selling
-            buy_price = trader.inventory.pop(0)
+        elif action == 2 and len(trader.inventory) > 0:  # Selling and we already bought stocks
+            buy_price = trader.inventory.pop(0) # Remove stock from inventory in order
 
-            reward = max(data[t] - buy_price, 0)
-            total_profit += data[t] - buy_price
+            reward = max(data[t] - buy_price, 0) # Either 0 reward or the profit
+            total_profit += data[t] - buy_price # Update total profit
             print("AI Trader sold: ", stocks_price_format(
                 data[t]), " Profit: " + stocks_price_format(data[t] - buy_price))
             
-        if t == data_samples - 1:
+        if t == data_samples - 1: # If this is the last sample, be done
             done = True
         else:
             done = False
         
-        trader.memory.append((state, action, reward, next_state, done))
+        trader.memory.append((state, action, reward, next_state, done)) # Put all data in memory
 
-        state = next_state
+        state = next_state # Change state to next_state to continue iterating
 
         if done:
             print("########################")
             print("TOTAL PROFIT: {}".format(total_profit))
             print("########################")
         
-        if len(trader.memory) > batch_size:
+        if len(trader.memory) > batch_size: # If we have more information in our memory than our specified batch, train on this batch
             trader.batch_train(batch_size)
         
-    if episode % 10 == 0:
+    if episode % 10 == 0: # Save this model every ten episodes
         trader.model.save("ai_trader_{}.h5".format(episode))
