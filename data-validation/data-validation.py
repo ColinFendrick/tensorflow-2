@@ -26,8 +26,8 @@ anomalies = tfdv.validate_statistics(statistics=test_stats, schema=schema)
 tfdv.display_anomalies(anomalies)
 
 # Create new data with anomalies
-test_set_copy = test_set.copy()
-test_set_copy.drop("soot", axis=1, inplace=True)
+test_set_copy = test_set.copy() # Don't change the original dataset
+test_set_copy.drop("soot", axis=1, inplace=True) # We don't want this column
 
 # Show statistics based on data with anomalies
 test_set_copy_stats = tfdv.generate_statistics_from_dataframe(
