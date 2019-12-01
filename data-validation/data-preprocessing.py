@@ -17,9 +17,9 @@ print(features.head())  # Show the head columns
 dict_features = list(features.to_dict("index").values())
 
 # Define the dataset metadata
-data_metadata = dataset_metadata.DatasetMetadata(
-    dataset_schema.from_feature_spec({
-        "no2": tf.io.FixedLenFeature([], tf.float32),
+data_metadata = dataset_metadata.DatasetMetadata( # Takes info about columns
+    dataset_schema.from_feature_spec({ # Receives python dictionary of columns
+        "no2": tf.io.FixedLenFeature([], tf.float32), # Generate columns manually
         "so2": tf.io.FixedLenFeature([], tf.float32),
         "pm10": tf.io.FixedLenFeature([], tf.float32),
         "soot": tf.io.FixedLenFeature([], tf.float32),
@@ -29,17 +29,19 @@ data_metadata = dataset_metadata.DatasetMetadata(
 
 # Preprocessing function
 def preprocessing_fn(inputs):
+    # Define each column manually
     no2 = inputs['no2']
     pm10 = inputs['pm10']
     so2 = inputs['so2']
     soot = inputs['soot']
 
+    # Normalize columns in preprocessing
     no2_normalized = no2 - tft.mean(no2)
     so2_normalized = so2 - tft.mean(so2)
-
     pm10_normalized = tft.scale_to_0_1(pm10)
     soot_normalized = tft.scale_by_min_max(soot)
 
+    # Return the normalized columns in a dictionary
     return {
         "no2_normalized": no2_normalized,
         "so2_normalized": so2_normalized,
@@ -50,17 +52,17 @@ def preprocessing_fn(inputs):
 
 # Tensorflow Transform uses Apache Beam in the background to perform scalable data transforms. In this function we will use a direct runner.
 # Arguments to provide to the runner:
-# dict_features - This is our dataset converted into Python Dictionary.
-# data_metadata - This is our mada data for the dataset that we have created.
-# preprocessing_fn - The main preprocessing function. Called to perform preprocessing operation per column.
+# dict_features - This is our dataset converted into Python Dictionary
+# data_metadata - This is our meta data for the dataset that we have created
+# preprocessing_fn - The main preprocessing function. Called to perform preprocessing operation per column
 
 # This is a special syntax used in Apache Beam. This is used to stack operations and invoke transforms on our data.
 # result = data_to_pass | where_to_pass_the_data
 
 # Our use case:
-# result -> transformed_dataset, transform_fn
-# data_to_pass -> (dict_features, data_metadata)
-# where_to_pass_the_data -> tft_beam.AnalyzeAndTransformDataset(preprocessing_fn)
+# result = transformed_dataset, transform_fn
+# data_to_pass = (dict_features, data_metadata)
+# where_to_pass_the_data = tft_beam.AnalyzeAndTransformDataset(preprocessing_fn)
 # transformed_dataset, transform_fn = ((dict_features, data_metadata) | tft_beam.AnalyzeAndTransformDataset(preprocessing_fn))
 
 # Data transform
@@ -68,13 +70,13 @@ def data_transform():
 
     with tft_beam.Context(temp_dir=tempfile.mkdtemp()):
         transformed_dataset, transform_fn = (
-            (dict_features, data_metadata) | tft_beam.AnalyzeAndTransformDataset(preprocessing_fn))
+            (dict_features, data_metadata) | tft_beam.AnalyzeAndTransformDataset(preprocessing_fn)) # Preprocessing_fn automatically called with the correct inputs
 
-    transformed_data, transformed_metadata = transformed_dataset
+    transformed_data, transformed_metadata = transformed_dataset # Break down the dataset
 
     for i in range(len(transformed_data)):
-        print("Raw: ", dict_features[i])
-        print("Transformed:", transformed_data[i])
+        print("Raw: ", dict_features[i]) # See the raw data
+        print("Transformed:", transformed_data[i]) # Compare with the transformed data
 
 
 data_transform()
