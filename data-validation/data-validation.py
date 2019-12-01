@@ -5,7 +5,6 @@ import tensorflow_data_validation as tfdv
 
 # Read the dataset
 dataset = pd.read_csv("data-validation/pollution-small.csv")
-print(dataset.shape)
 
 training_data = dataset[:1600]
 training_data.describe()
