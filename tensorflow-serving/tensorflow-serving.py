@@ -43,3 +43,29 @@ model.fit(X_train, y_train, batch_size=128, epochs=10)
 # Evaluate
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print("Test accuracy is {}".format(test_accuracy))
+
+# SAVE MODEL FOR PRODUCTION
+MODEL_DIR = "model/"
+version = 1
+export_path = os.path.join(MODEL_DIR, str(version))
+
+# Save model
+tf.compat.v1.saved_model.simple_save(tf.keras.backend.get_session(), export_dir=export_path, inputs={
+                           "input_image": model.input}, outputs={t.name: t for t in model.outputs})
+
+# Set up production environment
+os.environ['MODEL_DIR'] = os.path.abspath(MODEL_DIR)
+
+# Create a post request
+random_image = np.random.randint(0, len(X_test))
+data = json.dumps({"signature_name": "serving_default",
+                   "instances": [X_test[random_image].tolist()]})
+
+headers = {"content-type": "application/json"}
+json_response = requests.post(
+    url="http://localhost:8501/v1/models/cifar10:predict", data=data, headers=headers)
+predictions = json.loads(json_response.text)['predictions']
+
+plt.imshow(X_test[random_image])
+plt.show()
+class_names[np.argmax(predictions[0])]
