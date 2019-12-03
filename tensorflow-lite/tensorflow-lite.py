@@ -29,3 +29,15 @@ model.fit(X_train, y_train, epochs=5)
 # Evaluate
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print("Test accuracy is {}".format(test_accuracy))
+
+# Save model
+model_name = 'fashion_mobile_model.h5'
+tf.keras.models.save_model(model, model_name)
+
+# Convert for tf-lite
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+# Save the TFLite version
+with open("tf_model.tflite", "wb") as f:
+    f.write(tflite_model)
