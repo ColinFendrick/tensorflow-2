@@ -68,4 +68,7 @@ predictions = json.loads(json_response.text)['predictions']
 
 plt.imshow(X_test[random_image])
 plt.show()
-class_names[np.argmax(predictions[0])]
+print(class_names[np.argmax(predictions[0])])
+
+specific_json_response = requests.post(url="http://localhost:8501/v1/models/cifar10/versions/1:predict", data=data, headers=headers)
+print(specific_json_response)
